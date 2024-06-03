@@ -254,7 +254,7 @@ public class TableroController {
         int cantidadDulces = 0;
         for(int i = 0; i < 9; i++){
             for(int j = 0; j<9; j++){
-                if(this.matriz[i][j].getForma() == 0){
+                if(this.matriz[i][j].getForma() == 0){//verifica si se elimino el dulce, en Eliminar deja los espacios en ceros
                     cantidadDulces++;
                 }
             }

@@ -53,7 +53,7 @@ public class Tablero {
                 this.setDulce(i, j, new Dulce(Dulce.formaRamdon()));
             }
         }
-        actualizarTablero(false);
+        actualizarTablero(false);//Se asegura de que no haya combinaciones preformadas
     }
 
     /**
@@ -101,15 +101,15 @@ public class Tablero {
      * Actualiza el tablero con la variante que adiciona la puntuacion generada
      */
     public boolean actualizarTablero(boolean sumaPuntuacion) {
-        tableroController.eliminarDulces();
-        if(tableroController.validarPuntuacion(sumaPuntuacion)){
+        tableroController.eliminarDulces();//Eliminar dulces Repetidos si o si dejando los espacios en CEROs que luego verificara en validarPuntuacion
+        if(tableroController.validarPuntuacion(sumaPuntuacion)){//En el caso de que sea false, no sumara puntos pero retornara true(Util al iniciar partida)
             this.caerDulces();
             this.llenarDulces();
             this.actualizarTablero(sumaPuntuacion);
             return true;
         }else{
-            if(!tableroController.hayPosibleMovimiento())
-                generarTablero();
+            if(!tableroController.hayPosibleMovimiento())//La logica de esto el verificar que existan movimientos posibles osea, porque de no haber no tiene sentido la partida si no se podra hacer nada
+                generarTablero();//por eso mejor se genera un tablero nuevo, repitiendo todo lo anterior
             return false;
         }
     }

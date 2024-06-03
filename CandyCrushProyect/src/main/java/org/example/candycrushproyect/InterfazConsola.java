@@ -36,8 +36,9 @@ public class InterfazConsola {
                     int col2 = Integer.parseInt(datos[3]);
 
                     int[] movimiento = {fila1, col1, fila2, col2};
+                    if(comprobarPos(movimiento)){
                     tablero.moverDulce(movimiento);
-
+                    }
                     if (tablero.actualizarTablero(true)) {
                         System.out.println("Movimiento valido.");
                     } else {
@@ -54,6 +55,15 @@ public class InterfazConsola {
         System.out.println("Juego terminado. Tu puntaje final es: " + jugador.getPuntaje());
     }
 
+    public boolean comprobarPos(int[] posicion ){
+        if(posicion[0]==posicion[2]){
+            return (posicion[1]==posicion[3]+1) || (posicion[1]==posicion[3]-1);
+        }
+        if(posicion[1]==posicion[3]){
+            return (posicion[0]==posicion[2]+1) || (posicion[0]==posicion[2]-1);
+        }
+        return false;
+    }
     private void imprimirTablero() {
         Dulce[][] matriz = tablero.getMatriz();
         for (int i = 0; i < matriz.length; i++) {
