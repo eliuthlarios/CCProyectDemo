@@ -2,14 +2,16 @@
 package org.example.candycrushproyect;
 
 
+import org.example.candycrushproyect.Factory.DulceFactory;
+import org.example.candycrushproyect.Factory.Factory;
+
 public class Tablero {
     //Atributos
     private Dulce matriz[][];
     private TableroController tableroController;
+    private final Factory factory= new DulceFactory();
 
-    /**
-     * Al crear un tablero, se establece el tamaño de la matriz de dulces
-     */
+
     public Tablero(){
         this.matriz = new Dulce[9][9];
         tableroController = new TableroController(this);
@@ -24,41 +26,26 @@ public class Tablero {
         return matriz;
     }
 
-    /**
-     * Establece dulce en la posicion dada del tablero
-     * @param fila fila del dulce a establecer
-     * @param columna columna del dulce a establecer
-     * @param dulce dulce que establecerá en la posicion dada
-     */
+
     public void setDulce(int fila,int columna, Dulce dulce){
         this.matriz[fila][columna] = dulce;
     }
 
-    /**
-     * Obtiene dulce en la posición dada
-     * @param fila fila del dulce requerido
-     * @param columna columna del dulce requerido
-     * @return dulce requerido
-     */
+
     public Dulce getDulce(int fila,int columna){
         return this.matriz[fila][columna];
     }
 
-    /**
-     * Define cada posicion de la matriz de dulces de manera aleatorea
-     */
+
     public void generarTablero(){
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
-                this.setDulce(i, j, new Dulce(Dulce.formaRamdon()));
+                this.setDulce(i, j, factory.GenerarDulce((int)(Math.random()*6+1)));/*new Dulce(Dulce.formaRamdon())*/
             }
         }
-        actualizarTablero(false);//Se asegura de que no haya combinaciones preformadas
+        actualizarTablero(false);
     }
 
-    /**
-     * Se encarga de la gravedad característica del candy crush cuando se elimina algún dulces
-     */
     private void caerDulces() {
         for(int i = 0; i < 10; i++){
             for(int fila = 0; fila < 8; fila++){
@@ -72,23 +59,18 @@ public class Tablero {
         }
     }
 
-    /**
-     * Reemplaza los espacios vacios por nuevos dulces
-     */
+
     private void llenarDulces() {
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
                 if(this.matriz[i][j].getForma() == 0){
-                    this.matriz[i][j].setForma(Dulce.formaRamdon());
+                    this.matriz[i][j].setForma((int)(Math.random()*6+1));
                 }
             }
         }
     }
 
-    /**
-     * Mueve dos dulces segun posiciones dadas por el jugador en lenguaje tablero
-     * @param dato arreglo con posiciones dadas por el usuario y traducidas a lenguaje tablero
-     */
+
     public void moverDulce( int[] dato ) {
         int formaA = this.getDulce(dato[0], dato[1]).getForma();
         int formaB = this.getDulce(dato[2], dato[3]).getForma();
@@ -97,19 +79,17 @@ public class Tablero {
         this.matriz[dato[2]][dato[3]].setForma(formaA);
     }
 
-    /**
-     * Actualiza el tablero con la variante que adiciona la puntuacion generada
-     */
+
     public boolean actualizarTablero(boolean sumaPuntuacion) {
-        tableroController.eliminarDulces();//Eliminar dulces Repetidos si o si dejando los espacios en CEROs que luego verificara en validarPuntuacion
-        if(tableroController.validarPuntuacion(sumaPuntuacion)){//En el caso de que sea false, no sumara puntos pero retornara true(Util al iniciar partida)
+        tableroController.eliminarDulces();
+        if(tableroController.validarPuntuacion(sumaPuntuacion)){
             this.caerDulces();
             this.llenarDulces();
             this.actualizarTablero(sumaPuntuacion);
             return true;
         }else{
-            if(!tableroController.hayPosibleMovimiento())//La logica de esto el verificar que existan movimientos posibles osea, porque de no haber no tiene sentido la partida si no se podra hacer nada
-                generarTablero();//por eso mejor se genera un tablero nuevo, repitiendo todo lo anterior
+            if(!tableroController.hayPosibleMovimiento())
+                generarTablero();
             return false;
         }
     }

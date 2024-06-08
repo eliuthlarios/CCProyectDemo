@@ -8,26 +8,18 @@ public class TableroController {
 
     public TableroController(Tablero tablero){
         this.matriz = tablero.getMatriz();
-        jugador = Jugador.getReference("");
+        jugador = Jugador.getInstance("");
     }
 
     public Jugador getJugador(){
         return jugador;
     }
-    /**
-     * Notacion: pP puntero principal; cH: contador Horizontal; cV: contadorVertical; i: fila; j: columna;
-     * Este es un metodo algo refinado y elaborado
-     */
-    public void eliminarDulces() {
-        boolean eliminar = false;//si es true no elimina nueva pieza porq ya elimino una
 
-        //tipo de pieza a eliminar horizontales y de complejidad 2 (es decir, compuesta por fila y columna)
-        //selecciona casilla
+    public void eliminarDulces() {
+        boolean eliminar = false;
         for(int pPi=0; pPi<9; pPi++){
             for(int pPj=0; pPj<9; pPj++){
-                //continua solo si la casilla esta en antes de la columna 7
                 if(pPj<7){
-                    //verifica si la casilla seleccionada esta en una fila
                     int cH = 1;
                     for(int cHj=pPj+1; cHj<9; cHj++){
                         if(matriz[pPi][cHj].getForma() == matriz[pPi][pPj].getForma())
@@ -35,14 +27,10 @@ public class TableroController {
                         else
                             break;
                     }
-                    //continua solo si esta en fila
                     if(cH>2){
-                        eliminar=true;//porque es fijo que se elimina una pieza
-                        //itera a lo largo de la fila
+                        eliminar=true;
                         for(int cHj=pPj; cHj<pPj+cH; cHj++){
-                            //verifica si alguna parte de la fila esta en una columna
                             int cV = 1;
-                            //cuenta hacia arriba
                             if(pPi>0)
                                 for(int cVi=pPi-1; cVi>=0; cVi--){
                                     if(matriz[cVi][cHj].getForma() == matriz[pPi][cHj].getForma())
@@ -50,7 +38,6 @@ public class TableroController {
                                     else
                                         break;
                                 }
-                            //cuenta hacia abajo
                             if(pPi<8)
                                 for(int cVi=pPi+1; cVi<9; cVi++){
                                     if(matriz[cVi][cHj].getForma() == matriz[pPi][cHj].getForma())
@@ -58,9 +45,7 @@ public class TableroController {
                                     else
                                         break;
                                 }
-                            //caso de que este en columna
                             if(cV>2){
-                                //elimina hacia arriba
                                 if(pPi>0)
                                     for(int cVi=pPi-1; cVi>=0; cVi--){
                                         if(matriz[cVi][cHj].getForma() == matriz[pPi][cHj].getForma())
@@ -68,7 +53,6 @@ public class TableroController {
                                         else
                                             break;
                                     }
-                                //elimina hacia abajo
                                 if(pPi<8)
                                     for(int cVi=pPi+1; cVi<9; cVi++){
                                         if(matriz[cVi][cHj].getForma() == matriz[pPi][cHj].getForma())
@@ -77,7 +61,6 @@ public class TableroController {
                                             break;
                                     }
                             }
-                            //elimina el del centro o fila este o no este en columna
                             matriz[pPi][cHj].setForma(0);
                         }
                     }
@@ -85,14 +68,10 @@ public class TableroController {
             }
         }
 
-        //pieza a eliminar verticales
         if(!eliminar)
-            //selecciona casilla
             for(int pPi=0; pPi<9; pPi++){
                 for(int pPj=0; pPj<9; pPj++){
-                    //continua solo si la casilla esta en antes de la fila 7
                     if(pPi<7){
-                        //verifica si la casilla seleccionada esta en una columna
                         int cV = 1;
                         for(int cVi=pPi+1; cVi<9; cVi++){
                             if(matriz[cVi][pPj].getForma() == matriz[pPi][pPj].getForma())
@@ -100,9 +79,7 @@ public class TableroController {
                             else
                                 break;
                         }
-                        //continua solo si esta en columna
                         if(cV>2)
-                            //itera a lo largo de la columna
                             for(int cVi=pPi; cVi<pPi+cV; cVi++){
                                 matriz[cVi][pPj].setForma(0);
                             }
@@ -246,15 +223,12 @@ public class TableroController {
         return false;
     }
 
-    /**
-     * Adiciona la puntuacion generada por el movimiento del usuario
-     * @param sumaPuntuacion true si desea q la validacion sume puntuacion
-     */
+
     public boolean validarPuntuacion(boolean sumaPuntuacion) {
         int cantidadDulces = 0;
         for(int i = 0; i < 9; i++){
             for(int j = 0; j<9; j++){
-                if(this.matriz[i][j].getForma() == 0){//verifica si se elimino el dulce, en Eliminar deja los espacios en ceros
+                if(this.matriz[i][j].getForma() == 0){
                     cantidadDulces++;
                 }
             }
@@ -264,10 +238,7 @@ public class TableroController {
         return cantidadDulces != 0;
     }
 
-    /**
-     * Suma puntuacion dependiendo del numero de dulces en serie dados
-     * @param cantidadDulces numero de dulces en serie
-     */
+
     private void sumarPuntuacion( int cantidadDulces ) {
         switch(cantidadDulces){
             case 3:

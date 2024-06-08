@@ -3,23 +3,25 @@ package org.example.candycrushproyect;
 import java.util.Scanner;
 
 import org.example.candycrushproyect.Jugador;
+import org.example.candycrushproyect.Observer.Observador;
 
-public class InterfazConsola {
+public class InterfazConsola implements Observador {
     private Tablero tablero;
     private Jugador jugador;
     private Scanner scanner;
 
     public InterfazConsola(String nombreJugador) {
         this.tablero = new Tablero();
-        this.jugador = Jugador.getReference(nombreJugador);
+        this.jugador = Jugador.getInstance(nombreJugador);
+        this.jugador.anadirObservador(this);
         this.scanner = new Scanner(System.in);
     }
 
     public void iniciarJuego() {
         System.out.println("¡Bienvenido a Candy Crush, " + jugador.getNombre() + "!");
+
         while (jugador.getVidasRestantes() > 0) {
             imprimirTablero();
-            System.out.println("Turnos restantes: " + jugador.getTurnosRestantes() + ", Vidas restantes: " + jugador.getVidasRestantes() + ", Puntaje: " + jugador.getPuntaje());
             System.out.println("Ingresa el movimiento (fila1 col1 fila2 col2) o 'salir' para terminar:");
             String entrada = scanner.nextLine();
 
@@ -30,10 +32,10 @@ public class InterfazConsola {
             String[] datos = entrada.split(" ");
             if (datos.length == 4) {
                 try {
-                    int fila1 = Integer.parseInt(datos[0]);
-                    int col1 = Integer.parseInt(datos[1]);
-                    int fila2 = Integer.parseInt(datos[2]);
-                    int col2 = Integer.parseInt(datos[3]);
+                    int fila1 = Integer.parseInt(datos[0])-1;
+                    int col1 = Integer.parseInt(datos[1])-1;
+                    int fila2 = Integer.parseInt(datos[2])-1;
+                    int col2 = Integer.parseInt(datos[3])-1;
 
                     int[] movimiento = {fila1, col1, fila2, col2};
                     if(comprobarPos(movimiento)){
@@ -42,7 +44,7 @@ public class InterfazConsola {
                     if (tablero.actualizarTablero(true)) {
                         System.out.println("Movimiento valido.");
                     } else {
-                        jugador.restarTurno();//probando si ahora resta un turno cuando se equivoca
+                        jugador.restarTurno();
                         System.out.println("Movimiento invalido, intenta de nuevo.");
                     }
                 } catch (NumberFormatException e) {
@@ -64,15 +66,31 @@ public class InterfazConsola {
         }
         return false;
     }
-    private void imprimirTablero() {
-        Dulce[][] matriz = tablero.getMatriz();
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[i].length; j++) {
-                System.out.print(matriz[i][j].getForma() + " ");
-            }
-            System.out.println();
-        }
+
+  private void imprimirTablero() {
+      Dulce[][] matriz = tablero.getMatriz();
+      int filas = matriz.length;
+      int columnas = matriz[0].length;
+
+
+      System.out.print("   ");
+      for (int j = 0; j < columnas; j++) {
+          System.out.print((j + 1) + " ");
+      }
+      System.out.println();
+
+      for (int i = 0; i < filas; i++) {
+          System.out.print((i + 1) + "  ");
+          for (int j = 0; j < columnas; j++) {
+              System.out.print(matriz[i][j].type() + " ");
+          }
+          System.out.println();
+      }
+  }
+
+
+    @Override
+    public void ActualizarEstado() {
+        System.out.println("Turnos restantes: " + jugador.getTurnosRestantes() + ", Vidas restantes: " + jugador.getVidasRestantes() + ", Puntaje: " + jugador.getPuntaje());
     }
-
-
 }
